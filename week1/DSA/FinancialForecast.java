@@ -38,3 +38,4 @@ public class FinancialForecast {
 
     //Recursion is mostly used in divide and conquer where we divide a bigger problem into smaller subproblems and then solve/ conquer it separately. Then we merge them. This will certainly reduce the computation process by working on smaller problems rather than one big problem which will need more computation power. Thus recursion helps in reduction of computation power. 
 }
+ 

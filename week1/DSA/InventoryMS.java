@@ -8,7 +8,7 @@ import java.util.Scanner;
  * Data structure and algorithms is a process to store or structure data in an efficient way, that can ensure easy access, updation and deletion of data so that there won't be any waste of space and time.
  *  In a large inventory the amount of data will be huge. To efficiently access and manipulate them, we need a proper structure to store data so that the data can be maintained easily. If we don't structure them properly, due to the huge size of the data, it will take a lot of time to search, create, update and delete them.
 */
-
+ 
 //Suitable data structure for this will be hashmap for faster access and easy manipulation of data.
 
 public class InventoryMS {

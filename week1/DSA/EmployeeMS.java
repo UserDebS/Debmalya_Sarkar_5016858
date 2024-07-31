@@ -4,7 +4,7 @@
 //Array is efficient when it comes to accessing an element from the collection because of index addressing.
 
 import java.util.Scanner;
-
+ 
 public class EmployeeMS {
     public static void main(String[] args) {
         EmployeeMSystem eMSystem = new EmployeeMSystem();

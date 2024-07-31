@@ -78,7 +78,7 @@ class Inventory {
     }
 
     //Unlike linear search which traverse the entire array to search for an element, binary search divides the entire array into two. Then based on the middle element, it then again divides the subarray into two subarrays. Thus the process continues until the targeted element is found. If the array is already sorted then binary search will be the optimal method to search for an element. As linear search's time complexity is O(n) and binary search's time complexity is O(logn).
-
+ 
     //For this program, as the autoGenId will be generated an incremented id for every instanciation, there is no need to sort the array. So binary search will be more efficient in this case.
 
     void print() {//O(n) complexity to print the elements.

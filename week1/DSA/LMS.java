@@ -43,7 +43,7 @@ class LibMS {
         for(int i = 0; i < maxsize; i++) {
             books[i] = new Book("Book" + String.valueOf(i + 1), "Author" + String.valueOf(i + 100));
         }
-    }
+    }  
 
     void linearSearch(String title) {
         for(int i = 0; i < maxsize; i++) {
@@ -73,4 +73,4 @@ class LibMS {
     //Time complextiy of linear search is O(n) and binary search is O(logn).
 
     //For a collection of huge size linear search won't be efficient. Traversing the entire collection will take a lot of time. So for this case the better approach would be to use binary search only if the collection is in a sorted order by the searched attribute.
-}
+} 
