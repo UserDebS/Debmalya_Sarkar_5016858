@@ -33,17 +33,17 @@ public class ECommerse {
         inventory.products[index].show();
         System.out.print("Search id using binary search : ");
         id = sc.nextInt();
-        Arrays.sort(inventory.products);
         index = inventory.binarySeach(id, 0, inventory.maxsize);
         inventory.products[index].show();
     }
 }
 
-class Product implements Comparable<Product>{
+class Product {
+    private static int autoGenID = 0;
     int product_id;
     String product_name, category;
     Product(String product_name, String category) {
-        this.product_id = (int)(Math.random() * 100) + 1;
+        this.product_id = ++autoGenID;
         this.product_name = product_name;
         this.category = category;
     }
@@ -51,10 +51,6 @@ class Product implements Comparable<Product>{
     public void show() {
         System.out.printf("{\n\tProduct ID : %d,\n\tProduct Name : %s,\n\tCatagory : %s,\n},\n",
                 this.product_id, this.product_name, this.category);
-    }
-
-    public int compareTo(Product p) {
-        return this.product_id - p.product_id;
     }
 }
 
@@ -80,6 +76,10 @@ class Inventory {
         if( products[mid].product_id > id) return binarySeach(id, low, mid);
         return binarySeach(id, mid, high);
     }
+
+    //Unlike linear search which traverse the entire array to search for an element, binary search divides the entire array into two. Then based on the middle element, it then again divides the subarray into two subarrays. Thus the process continues until the targeted element is found. If the array is already sorted then binary search will be the optimal method to search for an element. As linear search's time complexity is O(n) and binary search's time complexity is O(logn).
+
+    //For this program, as the autoGenId will be generated an incremented id for every instanciation, there is no need to sort the array. So binary search will be more efficient in this case.
 
     void print() {//O(n) complexity to print the elements.
         for(Product product : products) {

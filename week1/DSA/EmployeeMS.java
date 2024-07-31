@@ -1,3 +1,8 @@
+//Question 4
+//An array is a linear data structure where elements of same data type are stored in memory in a contiguous manner. It uses the 0th indexed memory location to relatively address the other elements of the array.
+
+//Array is efficient when it comes to accessing an element from the collection because of index addressing.
+
 import java.util.Scanner;
 
 public class EmployeeMS {
@@ -69,23 +74,23 @@ class EmployeeMSystem {
         currentsize = -1;
     }
 
-    void add(String name, String position, double salary) {
+    void add(String name, String position, double salary) {//The time complexity of this operation will be O(1) as it needs to just increment the currentsize element to address the next index and update that.
         if(currentsize == maxsize - 1) return;
         employees[++currentsize] = new Employee(name, position, salary);
     }
 
-    int search(int id) {
+    int search(int id) {//This method is using linear search as, the id will be random and not in sorted order. So linear search will need to be used here. The time complexity will be O(n)
         for(int i = 0; i <= currentsize; i++) {
             if(employees[i].employeeId == id) return i;
         }
         return -1;
     }
 
-    void traverse() {
+    void traverse() {//The time complexity of this operation will be O(n) as it linearly traverse through entire array.
         for(int i = 0; i <= currentsize; i++) employees[i].show();
     }
 
-    void delete(int id) {
+    void delete(int id) {// The general time complexity of this operation will be O(n) as it will need to left shift all the elemenets at left side to fill the deleted element.
         int ind = search(id);
         if(ind == currentsize) {
             employees[currentsize--] = null;
@@ -94,4 +99,5 @@ class EmployeeMSystem {
         for(int i = ind; i < currentsize; i++) employees[i] = employees[i + 1];
         employees[currentsize--] = null;
     }
+    //Arrays are only good for accessing elements from a collection. But the array is static in size(That means that only a certain number of elements can be stored here, not more than that), it has a size limit. If we try to make a dynamic sized array, that will be pretty hectic and inefficient. Other than that, deleting an element is also inefficient in array as we need to left shift all the right side elements, whose complexity will be O(n). For these reasons, arrays should only be used where there is only fixed number of elements required to store and they are read only.
 }

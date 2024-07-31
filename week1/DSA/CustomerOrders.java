@@ -1,4 +1,4 @@
-
+//Question 3
 public class CustomerOrders {
     public static void main(String[] args) {
         OrderManager orderManager = new OrderManager();
@@ -79,6 +79,11 @@ class OrderManager {
         }
     }
 
+    //In case of bubblesort, if the array is already sorted(best case) then the time complexity will be O(n) else it will be O(n^2)
+
+    //In case of quicksort, if the array is already sorted(worst case) then the time complexity will be O(n^2) else it will be O(nlogn)
+
+    //Quicksort is more efficient and faster than bubblesort in case of sorting an unsorted array. If there is a large number of data, using bubblesort will take enormous amount of time, quicksort will be a better choice there. That's why quicksort is preferred over bubblesort.
     void print() {//O(n) complexity to print the elements.
         for(Order order : orders) {
             order.show();

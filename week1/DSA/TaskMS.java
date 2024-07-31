@@ -1,3 +1,10 @@
+//Question 5
+
+//Linked list is a linear data structure. It is a collection of nodes where each nodes hold a value and the link/connection to the next node.
+
+//A singly linked list is a type of linked list where each nodes holds a data variable and the link/connection to the next node. Here, traversal to one direction/ to end of the list is possible only.
+
+//A doublely linked list is a type of linked list where each nodes holds a data variable and the link/connection to the previous node and the next node. Here traversal is bi-directional. That means we can traverse both left and right from any node.
 import java.util.Scanner;
 
 public class TaskMS {
@@ -76,7 +83,7 @@ class TaskLinkedList {
         this.tail = head;
     }
 
-    void add(String taskname, String status) {
+    void add(String taskname, String status) {//As we are using a tail node, the time complexity for this operation will be O(1)
         if(head == null) {
             head = new Node(new Task(taskname, status));
             tail = head;
@@ -86,7 +93,7 @@ class TaskLinkedList {
         }
     }
 
-    void search(int id) {
+    void search(int id) {//As we need to linearly traverse the linked list, the time complexity for this operation will be O(n)
         Node trav = head;
         while(trav != null) {
             if(trav.val.taskId == id) {
@@ -97,7 +104,7 @@ class TaskLinkedList {
         }
     }
 
-    void traverse() {
+    void traverse() {//As binary search is not possible in linked list, we need to linearly search the linked list, the time complexity for this operation will be O(n)
         Node trav = head;
         while(trav != null) {
             trav.show();
@@ -105,7 +112,7 @@ class TaskLinkedList {
         }
     }
 
-    void delete(int id) {
+    void delete(int id) {// As we need to first find the element, the time complexity for this operation will be O(n)
         if(head == null) return;
         if(head.val.taskId == id) {
             head = head.next;
@@ -121,4 +128,5 @@ class TaskLinkedList {
             trav = trav.next;
         }
     }
+    //Unlike array linked list can store dynamic data, as it allocates memory for a node in run time then set the value of the node. But in array is was not possible. That's why there won't be any waste of memory here, which was present in array by allocating huge size of memory in compile time and not using the entire space.
 }
