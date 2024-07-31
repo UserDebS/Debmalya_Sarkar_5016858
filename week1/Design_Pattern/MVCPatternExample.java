@@ -45,7 +45,7 @@ class StudentController {
     StudentController(Student student) {
         this.model = student;
         this.view = new StudentView(student);
-    }
+    }  
 
     void update(int id, String name, String grade) {
         this.model.id = id;

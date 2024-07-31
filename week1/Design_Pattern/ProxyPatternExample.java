@@ -3,7 +3,7 @@ public class ProxyPatternExample {
         Test test = new Test();
         test.test();
     }
-}
+} 
 
 class Test{
     void test() {

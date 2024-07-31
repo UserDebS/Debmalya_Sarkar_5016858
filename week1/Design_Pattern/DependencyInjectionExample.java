@@ -14,7 +14,7 @@ class Main {
 
 interface CustomerRepository  {
     void findCustomerById(int id);
-}
+}  
 
 class CustomerRepositoryImpl implements CustomerRepository {
     public void findCustomerById(int id) {

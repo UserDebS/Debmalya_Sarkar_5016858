@@ -5,7 +5,7 @@ public class ObserverPatternExample {
         Test test = new Test();
         test.test();
     }
-}
+} 
 
 class Test{
     void test() {

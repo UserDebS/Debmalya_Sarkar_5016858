@@ -9,7 +9,7 @@ class Test {
     void test() {
         Logger logger = Logger.getInstance(); 
     }
-}
+} 
 
 class Logger{
     private static Logger instance = new Logger();

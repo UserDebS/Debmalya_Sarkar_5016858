@@ -3,7 +3,7 @@ public class FactoryMethodPatternExample {
         Test test = new Test();
         test.createDiffDocument();
     }
-}
+}    
 
 
 interface WordDocument {

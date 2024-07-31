@@ -4,7 +4,7 @@ public class DecoratorPatternExample {
         test.test();
     }
 }
-
+  
 class Test {
     void test() {
         Notifier emailNotifier = new SMSNotifierDecorator(new EmailNotifier());
