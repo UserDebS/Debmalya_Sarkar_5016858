@@ -1,0 +1,6 @@
+--Question: Write a PL/SQL block that fetches all loans due in the next 30 days and prints a reminder message for each customer.
+begin
+    for loan in (select name, l.customerid as id, l.enddate as ed from loans l join customers c on c.customerid = l.customerid where l.enddate between sysdate and sysdate + 30) loop
+    dbms_output.put_line('Loan is due on ' || loan.ed || ' for customer ' || loan.name);
+    end loop;
+end;

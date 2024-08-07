@@ -1,0 +1,61 @@
+--Question: Write a PL/SQL block using an explicit cursor GenerateMonthlyStatements that retrieves all transactions for the current month and prints a statement for each customer.
+
+DECLARE
+    CURSOR GENERATEMONTHLYSTATEMENTS IS
+    SELECT
+        C.CUSTOMERID,
+        C.NAME,
+        T.TRANSACTIONID,
+        T.TRANSACTIONDATE,
+        T.AMOUNT,
+        T.TRANSACTIONTYPE
+    FROM
+        CUSTOMERS C
+        JOIN ACCOUNTS A
+        ON C.CUSTOMERID = A.CUSTOMERID
+        JOIN TRANSACTIONS T
+        ON A.ACCOUNTID = T.ACCOUNTID
+    WHERE
+        T.TRANSACTIONDATE BETWEEN TRUNC(SYSDATE, 'MM') AND LAST_DAY(SYSDATE);
+    V_CUSTOMER_ID      CUSTOMERS.CUSTOMERID%TYPE;
+    V_NAME             CUSTOMERS.NAME%TYPE;
+    V_TRANSACTION_ID   TRANSACTIONS.TRANSACTIONID%TYPE;
+    V_TRANSACTION_DATE TRANSACTIONS.TRANSACTIONDATE%TYPE;
+    V_AMOUNT           TRANSACTIONS.AMOUNT%TYPE;
+    V_TRANSACTION_TYPE TRANSACTIONS.TRANSACTIONTYPE%TYPE;
+    V_PREV_CUSTOMER_ID CUSTOMERS.CUSTOMERID%TYPE := -1;
+BEGIN
+    OPEN GENERATEMONTHLYSTATEMENTS;
+    LOOP
+        FETCH GENERATEMONTHLYSTATEMENTS INTO V_CUSTOMER_ID, V_NAME, V_TRANSACTION_ID, V_TRANSACTION_DATE, V_AMOUNT, V_TRANSACTION_TYPE;
+        EXIT WHEN GENERATEMONTHLYSTATEMENTS%NOTFOUND;
+ 
+        -- Print header for new customer
+        IF V_CUSTOMER_ID != V_PREV_CUSTOMER_ID THEN
+            IF V_PREV_CUSTOMER_ID != -1 THEN
+                DBMS_OUTPUT.PUT_LINE('-----------------------------');
+            END IF;
+
+            DBMS_OUTPUT.PUT_LINE('Customer ID: '
+                                 || V_CUSTOMER_ID);
+            DBMS_OUTPUT.PUT_LINE('Name: '
+                                 || V_NAME);
+            DBMS_OUTPUT.PUT_LINE('Transactions for the month:');
+            DBMS_OUTPUT.PUT_LINE('Transaction ID | Date       | Amount | Type');
+            DBMS_OUTPUT.PUT_LINE('---------------|------------|--------|-----');
+            V_PREV_CUSTOMER_ID := V_CUSTOMER_ID;
+        END IF;
+ 
+
+        -- Print transaction details
+        DBMS_OUTPUT.PUT_LINE(RPAD(V_TRANSACTION_ID, 15)
+                             || '| '
+                             || TO_CHAR(V_TRANSACTION_DATE, 'YYYY-MM-DD')
+                                || ' | '
+                                || LPAD(V_AMOUNT, 6)
+                                   || ' | '
+                                   || V_TRANSACTION_TYPE);
+    END LOOP;
+
+    CLOSE GENERATEMONTHLYSTATEMENTS;
+END;

@@ -1,0 +1,32 @@
+--Question: Write a PL/SQL block using an explicit cursor UpdateLoanInterestRates that fetches all loans and updates their interest rates based on the new policy.
+
+DECLARE
+    CURSOR UPDATELOANINTERESTRATES IS
+    SELECT
+        LOANID,
+        INTERESTRATE
+    FROM
+        LOANS;
+    V_LOANID       LOANS.LOANID%TYPE;
+    V_INTERESTRATE LOANS.INTERESTRATE%TYPE;
+BEGIN
+    OPEN UPDATELOANINTERESTRATES;
+    LOOP
+        FETCH UPDATELOANINTERESTRATES INTO V_LOANID, V_INTERESTRATE;
+        EXIT WHEN UPDATELOANINTERESTRATES%NOTFOUND;
+ 
+        -- Update interest rate (e.g., increase by 1%)
+        UPDATE LOANS
+        SET
+            INTERESTRATE = V_INTERESTRATE + 1
+        WHERE
+            LOANID=V_LOANID;
+        DBMS_OUTPUT.PUT_LINE('Loan ID: '
+                             || V_LOANID
+                             || ' updated to new interest rate: '
+                             || (V_INTERESTRATE + 1));
+    END LOOP;
+
+    CLOSE UPDATELOANINTERESTRATES;
+    COMMIT;
+END;

@@ -1,0 +1,48 @@
+--Question: Write a PL/SQL block using an explicit cursor ApplyAnnualFee that deducts an annual maintenance fee from the balance of all accounts.
+
+DECLARE
+ 
+    -- Define the annual fee
+    ANNUAL_FEE  CONSTANT NUMBER := 50;
+ 
+    -- Cursor to fetch all account details
+    CURSOR APPLYANNUALFEE IS
+    SELECT
+        ACCOUNTID,
+        BALANCE
+    FROM
+        ACCOUNTS;
+    V_ACCOUNTID ACCOUNTS.ACCOUNTID%TYPE;
+    V_BALANCE   ACCOUNTS.BALANCE%TYPE;
+BEGIN
+ 
+    -- Open the cursor
+    OPEN APPLYANNUALFEE;
+ 
+    -- Loop through each account
+    LOOP
+        FETCH APPLYANNUALFEE INTO V_ACCOUNTID, V_BALANCE;
+        EXIT WHEN APPLYANNUALFEE%NOTFOUND;
+ 
+        -- Deduct the annual fee from the account balance
+        UPDATE ACCOUNTS
+        SET
+            BALANCE = V_BALANCE - ANNUAL_FEE,
+            LASTMODIFIED = SYSDATE
+        WHERE
+            ACCOUNTID = V_ACCOUNTID;
+ 
+        -- Print a message indicating the fee has been applied
+        DBMS_OUTPUT.PUT_LINE('Annual fee of '
+                             || ANNUAL_FEE
+                             || ' applied to Account ID: '
+                             || V_ACCOUNTID);
+    END LOOP;
+ 
+
+    -- Close the cursor
+    CLOSE APPLYANNUALFEE;
+ 
+    -- Commit the transaction
+    COMMIT;
+END;

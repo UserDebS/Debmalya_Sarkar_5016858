@@ -1,0 +1,33 @@
+--Question: Write a trigger CheckTransactionRules that ensures withdrawals do not exceed the balance and deposits are positive before inserting a record into the Transactions table.
+
+CREATE OR REPLACE TRIGGER CHECKTRANSACTIONRULES BEFORE
+    INSERT ON TRANSACTIONS FOR EACH ROW
+DECLARE
+    V_BALANCE ACCOUNTS.BALANCE%TYPE;
+BEGIN
+ 
+    -- Fetch the current balance of the account
+    SELECT
+        BALANCE INTO V_BALANCE
+    FROM
+        ACCOUNTS
+    WHERE
+        ACCOUNTID = :NEW.ACCOUNTID FOR UPDATE;
+ 
+    -- Check if the transaction is a withdrawal
+    IF :NEW.TRANSACTIONTYPE = 'withdrawal' THEN
+ 
+        -- Ensure the withdrawal does not exceed the balance
+        IF :NEW.AMOUNT > V_BALANCE THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Insufficient balance for the withdrawal.');
+        END IF;
+    ELSIF :NEW.TRANSACTIONTYPE = 'deposit' THEN
+ 
+        -- Ensure the deposit amount is positive
+        IF :NEW.AMOUNT <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20002, 'Deposit amount must be positive.');
+        END IF;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20003, 'Invalid transaction type.');
+    END IF;
+END;

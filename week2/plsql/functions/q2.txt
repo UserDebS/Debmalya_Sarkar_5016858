@@ -1,0 +1,25 @@
+--Question: Write a function CalculateMonthlyInstallment that takes the loan amount, interest rate, and loan duration in years as input and returns the monthly installment amount.
+
+CREATE OR REPLACE FUNCTION CALCULATEMONTHLYINSTALLMENT (
+    LOANAMOUNT NUMBER,
+    INTERESTRATE NUMBER,
+    LOANDURATIONYEARS NUMBER
+) RETURN NUMBER IS
+    MONTHLYINSTALLMENT NUMBER;
+    MONTHLYRATE        NUMBER;
+    TOTALPAYMENTS      NUMBER;
+BEGIN
+ 
+    -- Convert annual interest rate to monthly and calculate the number of payments
+    MONTHLYRATE := INTERESTRATE / 12 / 100;
+    TOTALPAYMENTS := LOANDURATIONYEARS * 12;
+ 
+    -- Calculate the monthly installment using the formula for an annuity
+    IF MONTHLYRATE = 0 THEN
+        MONTHLYINSTALLMENT := LOANAMOUNT / TOTALPAYMENTS;
+    ELSE
+        MONTHLYINSTALLMENT := LOANAMOUNT * MONTHLYRATE / (1 - POWER(1 + MONTHLYRATE, -TOTALPAYMENTS));
+    END IF;
+
+    RETURN MONTHLYINSTALLMENT;
+END;

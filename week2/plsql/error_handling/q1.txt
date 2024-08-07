@@ -1,0 +1,65 @@
+--Question: Write a stored procedure SafeTransferFunds that transfers funds between two accounts. Ensure that if any error occurs (e.g., insufficient funds), an appropriate error message is logged and the transaction is rolled back.
+
+CREATE OR REPLACE PROCEDURE SAFETRANSFERFUNDS (
+    P_FROMACCOUNTID IN NUMBER,
+    P_TOACCOUNTID IN NUMBER,
+    P_AMOUNT IN NUMBER
+) AS
+    V_FROMBALANCE  NUMBER;
+    V_TOBALANCE    NUMBER;
+    V_ERRORMESSAGE VARCHAR2(200);
+BEGIN
+ 
+    -- Start the transaction
+    SAVEPOINT STARTTRANSACTION;
+ 
+    -- Get the balance of the source account
+    SELECT
+        BALANCE INTO V_FROMBALANCE
+    FROM
+        ACCOUNTS
+    WHERE
+        ACCOUNTID = P_FROMACCOUNTID FOR UPDATE;
+ 
+    -- Check if the source account has sufficient funds
+    IF V_FROMBALANCE < P_AMOUNT THEN
+        V_ERRORMESSAGE := 'Insufficient funds in the source account.';
+        RAISE_APPLICATION_ERROR(-20001, V_ERRORMESSAGE);
+    END IF;
+ 
+
+    -- Get the balance of the destination account
+    SELECT
+        BALANCE INTO V_TOBALANCE
+    FROM
+        ACCOUNTS
+    WHERE
+        ACCOUNTID = P_TOACCOUNTID FOR UPDATE;
+ 
+    -- Deduct the amount from the source account
+    UPDATE ACCOUNTS
+    SET
+        BALANCE = BALANCE - P_AMOUNT,
+        LASTMODIFIED = SYSDATE
+    WHERE
+        ACCOUNTID = P_FROMACCOUNTID;
+ 
+    -- Add the amount to the destination account
+    UPDATE ACCOUNTS
+    SET
+        BALANCE = BALANCE + P_AMOUNT,
+        LASTMODIFIED = SYSDATE
+    WHERE
+        ACCOUNTID = P_TOACCOUNTID;
+ 
+    -- Commit the transaction
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+ 
+        -- Rollback the transaction
+        ROLLBACK TO STARTTRANSACTION;
+ 
+        -- Re-raise the exception to the caller
+        RAISE;
+END SAFETRANSFERFUNDS;

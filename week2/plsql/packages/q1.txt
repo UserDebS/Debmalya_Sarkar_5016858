@@ -1,0 +1,93 @@
+--Question: Create a package CustomerManagement with procedures for adding a new customer, updating customer details, and a function to get customer balance.
+
+CREATE OR REPLACE PACKAGE CUSTOMERMANAGEMENT AS
+
+    PROCEDURE ADDCUSTOMER(
+        P_CUSTOMERID NUMBER,
+        P_NAME VARCHAR2,
+        P_DOB DATE,
+        P_BALANCE NUMBER
+    );
+
+    PROCEDURE UPDATECUSTOMER(
+        P_CUSTOMERID NUMBER,
+        P_NAME VARCHAR2,
+        P_DOB DATE,
+        P_BALANCE NUMBER
+    );
+
+    FUNCTION GETCUSTOMERBALANCE(
+        P_CUSTOMERID NUMBER
+    ) RETURN NUMBER;
+END CUSTOMERMANAGEMENT;
+CREATE    OR REPLACE PACKAGE BODY CUSTOMERMANAGEMENT AS
+
+PROCEDURE ADDCUSTOMER(
+    P_CUSTOMERID NUMBER,
+    P_NAME VARCHAR2,
+    P_DOB DATE,
+    P_BALANCE NUMBER
+) IS
+BEGIN
+    INSERT INTO CUSTOMERS (
+        CUSTOMERID,
+        NAME,
+        DOB,
+        BALANCE,
+        LASTMODIFIED
+    ) VALUES (
+        P_CUSTOMERID,
+        P_NAME,
+        P_DOB,
+        P_BALANCE,
+        SYSDATE
+    );
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Customer with this ID already exists.');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20002, 'An error occurred while adding the customer.');
+END ADDCUSTOMER;
+
+PROCEDURE UPDATECUSTOMER(
+    P_CUSTOMERID NUMBER,
+    P_NAME VARCHAR2,
+    P_DOB DATE,
+    P_BALANCE NUMBER
+) IS
+BEGIN
+    UPDATE CUSTOMERS
+    SET
+        NAME = P_NAME,
+        DOB = P_DOB,
+        BALANCE = P_BALANCE,
+        LASTMODIFIED = SYSDATE
+    WHERE
+        CUSTOMERID = P_CUSTOMERID;
+    IF SQL%ROWCOUNT = 0 THEN
+        RAISE_APPLICATION_ERROR(-20003, 'Customer with this ID does not exist.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20004, 'An error occurred while updating the customer.');
+END UPDATECUSTOMER;
+
+FUNCTION GETCUSTOMERBALANCE(
+    P_CUSTOMERID NUMBER
+) RETURN NUMBER IS
+    V_BALANCE NUMBER;
+BEGIN
+    SELECT
+        BALANCE INTO V_BALANCE
+    FROM
+        CUSTOMERS
+    WHERE
+        CUSTOMERID = P_CUSTOMERID;
+    RETURN V_BALANCE;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20005, 'Customer with this ID does not exist.');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20006, 'An error occurred while retrieving the customer balance.');
+END GETCUSTOMERBALANCE;
+END CUSTOMERMANAGEMENT;

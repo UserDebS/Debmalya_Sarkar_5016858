@@ -1,0 +1,10 @@
+--Question: Write a PL/SQL block that loops through all customers, checks their age, and if they are above 60, apply a 1% discount to their current loan interest rates.
+begin
+    for customer in (select customerid as id, floor(months_between(sysdate, dob) / 12) as age from customers) loop
+    if customer.age >= 60 then
+    	update loans
+    	set interestrate = interestrate - 1
+    	where customerid = customer.id;
+    end if;
+	end loop;
+end;
