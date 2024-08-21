@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bookstoreapi.bookstoreapi.entities.Book;
+import com.bookstoreapi.bookstoreapi.exceptions.NoSuchBookExist;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,19 +38,21 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         Book book = booklist.stream().filter(data -> data.getId().equals(id)).findFirst().orElse(null);
-        return (book == null)? ResponseEntity.notFound().build() : ResponseEntity.ok().body(book);
+        if(book == null) throw new NoSuchBookExist("No Such Book Exists");
+        return ResponseEntity.ok().body(book);
     }
 
     private Book getBook(Long id) {
         return booklist.stream().filter(data -> data.getId().equals(id)).findFirst().orElse(null);
     }
-    
+
 
     @PostMapping
     public ResponseEntity<Book> postBook(@RequestBody Book entity) {
         booklist.add(entity);
-        return ResponseEntity.ok().body(entity);
+        return ResponseEntity.created(null).body(entity);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<Book> putBook(@PathVariable Long id, @RequestBody Book entity) {
         Book book = getBook(id);
