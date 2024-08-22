@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookDTO {
     private Long id;
-    @JsonProperty("book_title")
+    @JsonProperty("Btitle")
     private String title;
     private String author, isbn;
     private double price;

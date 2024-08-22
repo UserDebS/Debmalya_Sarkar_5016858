@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class CustomerDTO {
     private Long id;
     private String email;
-    @JsonProperty("Customer_Name")
+    @JsonProperty("Cname")
     private String name;
 }
