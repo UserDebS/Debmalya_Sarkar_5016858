@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomerDTO {
-    private Long id;
+    private static Long idGen = (long)(0);
+    private Long id = ++idGen;
     private String email;
     @JsonProperty("Cname")
     private String name;

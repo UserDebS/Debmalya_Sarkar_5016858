@@ -1,5 +1,8 @@
 package com.bookstoreapi.bookstoreapi.entities;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
-    private static Long idGen = (long)(0);
-    private Long id = ++idGen;
+    private Long id;
+    @NotNull
+    @Size(min = 1, max = 100)
     private String title, author, isbn;
+    @NotNull
+    @Min(0)
     private double price;
 }

@@ -9,7 +9,14 @@ import com.bookstoreapi.bookstoreapi.entities.Book;
 import com.bookstoreapi.bookstoreapi.exceptions.NoSuchBookExist;
 import com.bookstoreapi.bookstoreapi.mapper.BookMapper;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,18 +38,39 @@ public class BookController {
     @Autowired 
     private BookMapper bookMapper;
 
-    @GetMapping
-    public ResponseEntity<List<BookDTO>> getBook() {
-        return ResponseEntity.ok().body(booklist.stream().map(bookMapper::toBookDTO).collect(Collectors.toList()));
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @Operation(
+        summary = "Get books",
+        description = "Get all the books available",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Got the books")
+        }
+    )
+    public ResponseEntity<List<EntityModel<BookDTO>>> getBooks() {
+        return ResponseEntity.ok().body(booklist.stream().map(book -> {
+            BookDTO bookDTO = bookMapper.toBookDTO(book);
+            EntityModel<BookDTO> model = EntityModel.of(bookDTO);
+            Link selflink = WebMvcLinkBuilder.linkTo(BookController.class).slash(book.getId()).withSelfRel();
+            model.add(selflink);
+            return model;
+        }).collect(Collectors.toList()));
     }
 
-    @GetMapping("/query")
+    @GetMapping(value = "/query", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @Operation(
+        summary = "Get book",
+        description = "Get a book by using its id",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Book found"),
+            @ApiResponse(responseCode = "400", description = "Book not found")
+        }
+    )
     public ResponseEntity<BookDTO> getBookByTitleAndAuthor(@RequestParam String title, @RequestParam String author){
         Book book = booklist.stream().filter(data -> data.getTitle().equals(title) && data.getAuthor().equals(author)).findFirst().orElse(null);
         return (book == null)? ResponseEntity.notFound().build() : ResponseEntity.ok().body(bookMapper.toBookDTO(book));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
         Book book = booklist.stream().filter(data -> data.getId().equals(id)).findFirst().orElse(null);
         if(book == null) throw new NoSuchBookExist("No Such Book Exists");
@@ -54,13 +82,15 @@ public class BookController {
     }
 
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+    produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BookDTO> postBook(@RequestBody BookDTO entity) {
         booklist.add(bookMapper.toBook(entity));
         return ResponseEntity.created(null).body(entity);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+    produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BookDTO> putBook(@PathVariable Long id, @RequestBody BookDTO entity) {
         Book book = getBook(id);
         if(book == null) return ResponseEntity.notFound().build();
@@ -72,7 +102,7 @@ public class BookController {
         return ResponseEntity.ok().body(bookMapper.toBookDTO(book));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BookDTO> deleteBook(@PathVariable Long id) {
         Book book = getBook(id);
         if(book == null) return ResponseEntity.notFound().build();
